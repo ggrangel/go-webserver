@@ -24,7 +24,11 @@ func main() {
 
 	mux.HandleFunc("/api/reset", apiCfg.handlerReset)
 
-	mux.HandleFunc("POST /api/validate_chirp", handlerValidateChirp)
+	mux.HandleFunc("POST /api/chirps", handlerCreateChirp(filepathRoot+"/database.json"))
+
+	mux.HandleFunc("GET /api/chirps/", handlerGetChirps)
+
+	mux.HandleFunc("POST /api/users", handlerCreateUser)
 
 	server := &http.Server{
 		Addr:    ":" + port,
