@@ -6,8 +6,9 @@ import (
 )
 
 type Chirp struct {
-	Id   int    `json:"id"`
-	Body string `json:"body"`
+	Id       int    `json:"id"`
+	Body     string `json:"body"`
+	AuthorId int    `json:"author_id"`
 }
 
 func (db *DB) GetChirps() ([]Chirp, error) {
@@ -25,7 +26,6 @@ func (db *DB) GetChirps() ([]Chirp, error) {
 }
 
 func (db *DB) GetChirp(id int) (Chirp, error) {
-	fmt.Println("here")
 	dbStructure, err := db.loadDb()
 	fmt.Println(dbStructure)
 	if err != nil {
@@ -40,7 +40,7 @@ func (db *DB) GetChirp(id int) (Chirp, error) {
 	return chirp, nil
 }
 
-func (db *DB) CreateChirp(body string) (Chirp, error) {
+func (db *DB) CreateChirp(body string, authorId int) (Chirp, error) {
 	if len(body) > 140 {
 		return Chirp{}, fmt.Errorf("Chirp is too long")
 	}
@@ -52,9 +52,10 @@ func (db *DB) CreateChirp(body string) (Chirp, error) {
 		return Chirp{}, err
 	}
 
-	nextKey := getNextChirpKey(&dbStructure.Chirps)
+	nextKey := len(dbStructure.Chirps) + 1
 
-	dbStructure.addChirpToStorage(nextKey, body)
+	chirp := Chirp{Id: nextKey, Body: body, AuthorId: authorId}
+	dbStructure.Chirps[nextKey] = chirp
 
 	err = db.writeDb(dbStructure)
 	if err != nil {
@@ -64,19 +65,20 @@ func (db *DB) CreateChirp(body string) (Chirp, error) {
 	return dbStructure.Chirps[nextKey], nil
 }
 
-func (dbStructure *DbStructure) addChirpToStorage(id int, body string) {
-	chirp := Chirp{Id: id, Body: body}
-	dbStructure.Chirps[id] = chirp
-}
-
-func getNextChirpKey(chirps *map[int]Chirp) int {
-	lastKey := 0
-	for key := range *chirps {
-		if key > lastKey {
-			lastKey = key
-		}
+func (db *DB) DeleteChirp(id int) error {
+	dbStructure, err := db.loadDb()
+	if err != nil {
+		return err
 	}
-	return lastKey + 1
+
+	delete(dbStructure.Chirps, id)
+
+	err = db.writeDb(dbStructure)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func replaceProfanity(body *string) {

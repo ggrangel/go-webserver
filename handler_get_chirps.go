@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,11 +11,7 @@ import (
 )
 
 func (apiCfg *apiConfig) handlerGetChirps(w http.ResponseWriter, r *http.Request) {
-	log.Printf("here")
-
 	path_id := strings.TrimPrefix(r.URL.Path, "/api/chirps/")
-
-	log.Printf("Path ID: %s", path_id)
 
 	if path_id == "" {
 		handlerGetAllChirps(w, apiCfg.DB)

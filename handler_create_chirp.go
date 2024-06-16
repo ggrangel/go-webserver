@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+
+	"github.com/ggrangel/go-webserver/auth"
 )
 
 func (apiCfg *apiConfig) handlerCreateChirp(w http.ResponseWriter, r *http.Request) {
@@ -16,7 +19,32 @@ func (apiCfg *apiConfig) handlerCreateChirp(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	chirp, err := apiCfg.DB.CreateChirp(request.Body)
+	token, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	fmt.Println("Token:", token)
+
+	claims, err := auth.ParseToken(apiCfg.jwtSecret, token)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	userId, err := claims.GetSubject()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+	id, err := strconv.Atoi(userId)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	chirp, err := apiCfg.DB.CreateChirp(request.Body, id)
 	if err != nil {
 		fmt.Println("Error creating chirp:", err)
 	}
