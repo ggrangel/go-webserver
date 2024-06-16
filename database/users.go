@@ -66,16 +66,8 @@ func (db *DB) UpdateUser(id int, email, password string) (User, error) {
 
 	for _, user := range dbStructure.Users {
 		if user.Id == id {
-			if email != "" {
-				user.Email = email
-			}
-			if password != "" {
-				encryptedPassword, err := auth.HashPassword(password)
-				if err != nil {
-					return User{}, err
-				}
-				user.Password = string(encryptedPassword)
-			}
+			user.Email = email
+			user.Password = password
 			dbStructure.Users[id] = user
 			err = db.writeDb(dbStructure)
 			if err != nil {

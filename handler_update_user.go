@@ -37,7 +37,8 @@ func (apiCfg *apiConfig) handlerUpdateUser(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	user, err := apiCfg.DB.UpdateUser(id, request.Email, request.Password)
+	encryptedPassword, err := auth.HashPassword(request.Password)
+	user, err := apiCfg.DB.UpdateUser(id, request.Email, encryptedPassword)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
