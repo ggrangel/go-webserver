@@ -11,7 +11,7 @@ import (
 	"github.com/ggrangel/go-webserver/database"
 )
 
-func handlerGetChirps(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *apiConfig) handlerGetChirps(w http.ResponseWriter, r *http.Request) {
 	log.Printf("here")
 
 	path_id := strings.TrimPrefix(r.URL.Path, "/api/chirps/")
@@ -19,7 +19,7 @@ func handlerGetChirps(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Path ID: %s", path_id)
 
 	if path_id == "" {
-		handlerGetAllChirps(w, r)
+		handlerGetAllChirps(w, apiCfg.DB)
 		return
 	}
 
@@ -29,19 +29,10 @@ func handlerGetChirps(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	handlerGetChirpById(w, r, id)
+	handlerGetChirpById(w, apiCfg.DB, id)
 }
 
-func handlerGetChirpById(w http.ResponseWriter, r *http.Request, id int) {
-	db, err := database.NewDB("database.json")
-
-	fmt.Println("ID: ", id)
-
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-
+func handlerGetChirpById(w http.ResponseWriter, db *database.DB, id int) {
 	chirp, err := db.GetChirp(id)
 
 	fmt.Println(chirp)
@@ -62,7 +53,7 @@ func handlerGetChirpById(w http.ResponseWriter, r *http.Request, id int) {
 	w.Write(response)
 }
 
-func handlerGetAllChirps(w http.ResponseWriter, r *http.Request) {
+func handlerGetAllChirps(w http.ResponseWriter, db *database.DB) {
 	db, err := database.NewDB("database.json")
 
 	if err != nil {

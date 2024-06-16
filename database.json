@@ -3,11 +3,13 @@
   "users": {
     "1": {
       "id": 1,
-      "email": "mloneusk@example.co"
-    },
-    "2": {
-      "id": 2,
-      "email": "dackjorsey@example.co"
+      "email": "chuck@bettercall.com",
+      "password": "$2a$10$tNxmz9ATd9geOXhitgrZdePkdIRx8apAF3vH/Bz3fOaqolvnKvqii",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaGlycHkiLCJzdWIiOiIxIiwiZXhwIjoxNzE4NTQ0MzI3LCJpYXQiOjE3MTg1NDA3Mjd9.mjpH9BUzwmEM-Xibn4GDnYS6HyHdX_Bx-hB9IxuyClE",
+      "refresh_token": {
+        "refresh_token": "",
+        "expiry": 0
+      }
     }
   }
 }
