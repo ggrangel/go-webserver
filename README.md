@@ -4,11 +4,11 @@ This is a Go web server project aimed at learning and implementing best practice
 
 ## Key Features & Learning Objectives
 
-**Architecture**: Onion architecture to promote maintainability and testability.
-**Authentication**/Authorization: JWTs and refresh tokens for secure access control.
-**Data Management**: CRUD operations on an in-memory (JSON) database. Password hashing for security.
-**API Endpoints**: RESTful design with metrics, health checks, and webhooks.
-**Developer Experience**: Automated server restarts using Air.
+- **Architecture**: Onion architecture to promote maintainability and testability.
+- **Authentication**/Authorization: JWTs and refresh tokens for secure access control.
+- **Data Management**: CRUD operations on an in-memory (JSON) database. Password hashing for security.
+- **API Endpoints**: RESTful design with metrics, health checks, and webhooks.
+- **Developer Experience**: Automated server restarts using Air.
 
 ##  Getting Started
 
