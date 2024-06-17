@@ -14,6 +14,7 @@ type LoginResponse struct {
 	Email        string `json:"email"`
 	Token        string `json:"token"`
 	RefreshToken string `json:"refresh_token"`
+	IsChirpyRed  bool   `json:"is_chirpy_red"`
 }
 
 func (apiCfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +29,7 @@ func (apiCfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := apiCfg.DB.GetUser(request.Email, request.Password)
+	user, err := apiCfg.DB.GetUserByEmail(request.Email, request.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -71,6 +72,7 @@ func (apiCfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		Email:        user.Email,
 		Token:        user.Token,
 		RefreshToken: user.RefreshToken.Token,
+		IsChirpyRed:  user.IsChirpyRed,
 	}
 
 	json.NewEncoder(w).Encode(loginResponse)

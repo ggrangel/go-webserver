@@ -15,6 +15,7 @@ type apiConfig struct {
 	fileserverHits int
 	DB             *database.DB
 	jwtSecret      string
+	polkaApiKey    string
 }
 
 func main() {
@@ -27,6 +28,8 @@ func main() {
 	if jwtSecret == "" {
 		log.Fatal("JWT_SECRET is not set")
 	}
+
+	polkaApiKey := os.Getenv("POLKA_KEY")
 
 	db, err := database.NewDB(databaseFile)
 	if err != nil {
@@ -46,10 +49,17 @@ func main() {
 		fileserverHits: 0,
 		DB:             db,
 		jwtSecret:      jwtSecret,
+		polkaApiKey:    polkaApiKey,
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("/app/*", http.StripPrefix("/app/", apiCfg.middlewareMetricsInc(http.FileServer(http.Dir(filepathRoot)))))
+	mux.Handle(
+		"/app/*",
+		http.StripPrefix(
+			"/app/",
+			apiCfg.middlewareMetricsInc(http.FileServer(http.Dir(filepathRoot))),
+		),
+	)
 
 	mux.HandleFunc("GET /api/healthz", handlerHealthz)
 	mux.HandleFunc("GET /api/reset", apiCfg.handlerReset)
@@ -65,6 +75,8 @@ func main() {
 
 	mux.HandleFunc("POST /api/refresh", apiCfg.handlerRefreshToken)
 	mux.HandleFunc("POST /api/revoke", apiCfg.handlerRevokeToken)
+
+	mux.HandleFunc("POST /api/polka/webhooks", apiCfg.handlerPolkaWebhooks)
 
 	server := &http.Server{
 		Addr:    ":" + port,
